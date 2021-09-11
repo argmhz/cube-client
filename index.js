@@ -19,6 +19,7 @@ client.connect(1234, 'localhost', function() {
     ws.on('message', function(data) {
       client.write(data);
     });
+
   });
 
 });

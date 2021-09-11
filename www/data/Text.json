@@ -1,7 +1,27 @@
 {
   "fields" : [
     {
-      "name" : "text"
+      "name" : "text",
+      "datatype" : "string",
+      "label" : "Tekst"
+    },
+    {
+      "name" : "speed",
+      "datatype" : "integer",
+      "label" : "Hastighed",
+      "type" : "range",
+      "min" : 0,
+      "max" : 400000,
+      "value" : 80000
+    },
+    {
+      "name" : "color_speed",
+      "datatype" : "integer",
+      "label" : "Farve Hastighed",
+      "type" : "range",
+      "min" : 0,
+      "max" : 400000,
+      "value" : 22000
     }
   ]
 }
