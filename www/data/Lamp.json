@@ -1,0 +1,9 @@
+{
+  "fields" : [
+    {
+      "name" : "color",
+      "type" : "color",
+      "label" : "Color"
+    }
+  ]
+}
