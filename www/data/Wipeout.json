@@ -1,0 +1,20 @@
+{
+  "fields" : [
+    {
+      "name" : "speed",
+      "datatype" : "integer",
+      "label" : "Hastighed",
+      "type" : "range",
+      "min" : 0,
+      "max" : 100000,
+      "value" : 12000
+    },
+    {
+      "name" : "random_color",
+      "type" : "button",
+      "label" : "Skift farve",
+      "value" : "Skift",
+      "send" : 1
+    }
+  ]
+}

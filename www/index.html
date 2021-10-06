@@ -98,6 +98,7 @@
             response.json().then((data) => {
               for (let name in data.fields) {
                 let field = undefined;
+
                 switch (data.fields[name].type) {
                   case 'select':
                     field = document.createElement('select');
@@ -109,8 +110,14 @@
                         opt.innerHTML = item.label;
                         field.appendChild(opt);
                       });
-
                     }
+                  break;
+                  case 'button':
+                    field = document.createElement('button');
+                    field.innerHTML = data.fields[name].value;
+                    field.addEventListener('click',function(){
+                      webSocket.send(JSON.stringify({ action: "set", [data.fields[name].name] : data.fields[name].send }));
+                    });
 
                   break;
                   default:

@@ -1,0 +1,22 @@
+{
+  "fields" : [
+    {
+      "name" : "speed",
+      "datatype" : "integer",
+      "label" : "Hastighed",
+      "type" : "range",
+      "min" : 0,
+      "max" : 200000,
+      "value" : 50000
+    },
+    {
+      "name" : "thickness",
+      "datatype" : "integer",
+      "label" : "tykkelse",
+      "type" : "range",
+      "min" : 1,
+      "max" : 6,
+      "value" : 3
+    }
+  ]
+}
