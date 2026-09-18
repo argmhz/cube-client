@@ -1,10 +1,193 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="da" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Test</title>
+    <title>Cube</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap">
+    <style>
+      :root {
+        --bg: #0b0710;
+        --surface: #150f1e;
+        --surface-raised: #1b1327;
+        --border: #2a2138;
+        --text: #f1edf7;
+        --text-dim: #a89cbf;
+        --text-faint: #6d6081;
+        --accent-a: #ff5ec4;
+        --accent-b: #7c5cff;
+        --accent-c: #35d0ff;
+        --focus: #7c5cff;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Manrope", system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        display: flex;
+        justify-content: center;
+        padding: 32px 16px;
+      }
+
+      .panel {
+        width: 100%;
+        max-width: 560px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+
+      header h1 {
+        font-family: "Sora", system-ui, sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin: 0 0 6px;
+        text-wrap: balance;
+        background: linear-gradient(90deg, var(--accent-a), var(--accent-b), var(--accent-c));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      header p {
+        margin: 0;
+        color: var(--text-dim);
+        font-size: 14.5px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+      }
+
+      .field-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-dim);
+        margin-bottom: 8px;
+      }
+
+      select,
+      input:not([type="range"]) {
+        width: 100%;
+        appearance: none;
+        background: var(--surface-raised);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 15px;
+        padding: 12px 14px;
+      }
+
+      select {
+        background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+        background-position: calc(100% - 20px) center, calc(100% - 15px) center;
+        background-size: 5px 5px, 5px 5px;
+        background-repeat: no-repeat;
+      }
+
+      select:focus,
+      input:focus,
+      button:focus-visible {
+        outline: none;
+        border-color: var(--focus);
+        box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.35);
+      }
+
+      #options {
+        font-size: 17px;
+        font-weight: 600;
+        padding: 14px 16px;
+        margin-bottom: 20px;
+      }
+
+      #form:empty {
+        display: none;
+      }
+
+      #form .mb-3 {
+        margin-bottom: 18px;
+      }
+
+      #form .mb-3:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-dim);
+        margin-bottom: 8px;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 100px;
+        background: var(--surface-raised);
+        border: 1px solid var(--border);
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-b), var(--accent-c));
+        cursor: pointer;
+        border: 2px solid var(--bg);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid var(--bg);
+        background: linear-gradient(135deg, var(--accent-b), var(--accent-c));
+        cursor: pointer;
+      }
+
+      button.form-control {
+        width: 100%;
+        background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
+        border: none;
+        border-radius: 10px;
+        color: #0b0710;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        padding: 12px 14px;
+        cursor: pointer;
+      }
+
+      button.form-control:hover {
+        filter: brightness(1.08);
+      }
+
+      footer {
+        text-align: center;
+        margin-top: 24px;
+        color: var(--text-faint);
+        font-size: 12.5px;
+      }
+    </style>
     <script type="text/javascript">
 
       var webSocket = new WebSocket("ws://" + location.host + "/ws");
@@ -156,24 +339,25 @@
     </script>
 
   </head>
-  <body class="bg-dark text-light">
-    <div class="container">
+  <body>
+    <div class="panel">
+      <header>
+        <h1>Cube</h1>
+        <p>Fjernbetjening til den fysiske LED-kube</p>
+      </header>
 
-      <div class="row">
-        <div class="col-12">
-          <select class="form-select form-select-lg my-3" id="options">
-            <option>Vælg animation</option>
-          </select>
-        </div>
-        <div class="col-12">
-          <form>
-            <div id="form"></div>
-          </form>
-        </div>
+      <div class="card">
+        <label class="field-label" for="options">Animation</label>
+        <select id="options">
+          <option>Vælg animation</option>
+        </select>
+
+        <form>
+          <div id="form"></div>
+        </form>
       </div>
-    </div>
 
-    <!-- JavaScript Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+      <footer>Forbundet via WebSocket til cube-serveren</footer>
+    </div>
   </body>
 </html>
