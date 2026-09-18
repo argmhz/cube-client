@@ -1,5 +1,6 @@
 const express = require('express');
 const net = require('net');
+const path = require('path');
 
 const app = express();
 require('express-ws')(app);
@@ -25,8 +26,23 @@ let cubeConnected = false;
 // and so it's easy to stop broadcasting to a tab once it disconnects.
 const browserSockets = new Set();
 
+// Name of whatever animation was last selected by any browser tab, so a
+// freshly-opened or reconnecting tab can show what's already running instead
+// of a blank dropdown. Derived from the "select" messages passing through
+// below, not from the cube server itself (which has no way to report it).
+let currentAnimation = null;
+
 function broadcastStatus() {
   const message = JSON.stringify({ action: 'connectionStatus', connected: cubeConnected });
+  for (const ws of browserSockets) {
+    if (ws.readyState === ws.OPEN) {
+      ws.send(message);
+    }
+  }
+}
+
+function broadcastNowPlaying() {
+  const message = JSON.stringify({ action: 'nowPlaying', animation: currentAnimation });
   for (const ws of browserSockets) {
     if (ws.readyState === ws.OPEN) {
       ws.send(message);
@@ -72,8 +88,22 @@ function connectToCube() {
 app.ws('/ws', (ws) => {
   browserSockets.add(ws);
   ws.send(JSON.stringify({ action: 'connectionStatus', connected: cubeConnected }));
+  ws.send(JSON.stringify({ action: 'nowPlaying', animation: currentAnimation }));
 
   ws.on('message', (data) => {
+    // Peek at outgoing "select" commands to track what's running, so it can
+    // be broadcast to every other open tab. Anything that isn't JSON (or
+    // isn't a "select") is just forwarded untouched below, same as before.
+    try {
+      const command = JSON.parse(data);
+      if (command.action === 'select' && typeof command.animation === 'string') {
+        currentAnimation = path.basename(command.animation, '.so');
+        broadcastNowPlaying();
+      }
+    } catch (err) {
+      // not JSON -- nothing to track, just forward it
+    }
+
     if (cubeSocket && cubeConnected) {
       cubeSocket.write(data);
     }

@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <title>Cube</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#150f1e">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.svg">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap">
     <style>
       :root {
@@ -93,6 +97,18 @@
         font-size: 14.5px;
       }
 
+      .now-playing {
+        text-align: center;
+        color: var(--text-dim);
+        font-size: 13.5px;
+        margin: 0 0 20px;
+      }
+
+      .now-playing strong {
+        color: var(--text);
+        font-weight: 700;
+      }
+
       .card {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -147,12 +163,20 @@
         display: none;
       }
 
-      #form .mb-3 {
-        margin-bottom: 18px;
+      #form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
       }
 
-      #form .mb-3:last-child {
-        margin-bottom: 0;
+      #form .mb-3 {
+        flex: 1 1 100%;
+      }
+
+      /* Direction-style button groups (e.g. Dot's +X/-X/+Y/-Y/+Z/-Z) sit two
+         to a row instead of stacking one per row like every other field. */
+      #form .mb-3.btn-grid-item {
+        flex: 1 1 calc(50% - 9px);
       }
 
       .form-label {
@@ -243,6 +267,13 @@
           : 'Forbundet, men venter på kuben...';
       }
 
+      function setNowPlaying(name) {
+        var el = document.getElementById('nowPlaying');
+        el.innerHTML = name
+          ? 'Kører: <strong>' + name + '</strong>'
+          : 'Ingen animation valgt endnu';
+      }
+
       function connectWebSocket() {
         webSocket = new WebSocket("ws://" + location.host + "/ws");
 
@@ -272,6 +303,9 @@
                 break;
               case "connectionStatus":
                 setConnectionBanner(data.connected ? 'ok' : 'waiting-for-cube');
+                break;
+              case "nowPlaying":
+                setNowPlaying(data.animation);
                 break;
               default:
 
@@ -376,6 +410,9 @@
 
                 let wrap = document.createElement('div');
                 wrap.classList.add('mb-3');
+                if(data.fields[name].type === 'button') {
+                  wrap.classList.add('btn-grid-item');
+                }
 
                 if(data.fields[name].label) {
                   let label = document.createElement('label');
@@ -408,6 +445,8 @@
         <h1>Cube</h1>
         <p>Fjernbetjening til den fysiske LED-kube</p>
       </header>
+
+      <p id="nowPlaying" class="now-playing">Ingen animation valgt endnu</p>
 
       <div class="card">
         <label class="field-label" for="options">Animation</label>
