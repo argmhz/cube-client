@@ -1,0 +1,47 @@
+{
+  "fields": [
+    {
+      "name": "com",
+      "datatype": "integer",
+      "label": "Retning",
+      "type": "button",
+      "value": "+X",
+      "send": 1
+    },
+    {
+      "name": "com",
+      "datatype": "integer",
+      "type": "button",
+      "value": "-X",
+      "send": 2
+    },
+    {
+      "name": "com",
+      "datatype": "integer",
+      "type": "button",
+      "value": "+Y",
+      "send": 3
+    },
+    {
+      "name": "com",
+      "datatype": "integer",
+      "type": "button",
+      "value": "-Y",
+      "send": 4
+    },
+    {
+      "name": "com",
+      "datatype": "integer",
+      "type": "button",
+      "value": "+Z",
+      "send": 5
+    },
+    {
+      "name": "com",
+      "datatype": "integer",
+      "type": "button",
+      "value": "-Z",
+      "send": 6
+    }
+  ]
+}

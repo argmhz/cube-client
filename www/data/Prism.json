@@ -1,0 +1,13 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 15000,
+      "max": 200000,
+      "value": 30000
+    }
+  ]
+}

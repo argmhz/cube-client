@@ -226,6 +226,8 @@
 
           if(event.target.dataset.datatype == "integer"){
             value = parseInt(value);
+          } else if(event.target.dataset.datatype == "float"){
+            value = parseFloat(value);
           }
 
           webSocket.send(JSON.stringify({ action: "set", [event.target.name] : value }));
