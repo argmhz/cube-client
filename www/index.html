@@ -32,8 +32,36 @@
         line-height: 1.5;
         -webkit-font-smoothing: antialiased;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
         padding: 32px 16px;
+      }
+
+      .status-banner {
+        display: none;
+        width: 100%;
+        max-width: 560px;
+        box-sizing: border-box;
+        text-align: center;
+        font-size: 13.5px;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 10px 16px;
+        margin-bottom: 16px;
+      }
+
+      .status-banner.visible {
+        display: block;
+      }
+
+      .status-banner.reconnecting {
+        background: #3a1420;
+        color: #ff9db8;
+      }
+
+      .status-banner.waiting-for-cube {
+        background: #3a2e12;
+        color: #ffd580;
       }
 
       .panel {
@@ -190,7 +218,67 @@
     </style>
     <script type="text/javascript">
 
-      var webSocket = new WebSocket("ws://" + location.host + "/ws");
+      var webSocket;
+
+      // WebSocket messages carrying cube-server data arrive as a Blob (the
+      // existing binary passthrough from index.js); our own synthetic
+      // connectionStatus messages arrive as a plain text frame. Normalize
+      // both to a string before JSON.parse.
+      function messageText(data) {
+        if (data instanceof Blob) {
+          return data.text();
+        }
+        return Promise.resolve(data);
+      }
+
+      function setConnectionBanner(state) {
+        var banner = document.getElementById('connectionBanner');
+        if (state === 'ok') {
+          banner.className = 'status-banner';
+          return;
+        }
+        banner.className = 'status-banner visible ' + state;
+        banner.textContent = state === 'reconnecting'
+          ? 'Forbinder til cube-client...'
+          : 'Forbundet, men venter på kuben...';
+      }
+
+      function connectWebSocket() {
+        webSocket = new WebSocket("ws://" + location.host + "/ws");
+
+        webSocket.addEventListener('open', function(e){
+          webSocket.send(JSON.stringify({
+            action: "options"
+          }));
+        });
+
+        webSocket.addEventListener('close', function(e){
+          setConnectionBanner('reconnecting');
+          setTimeout(connectWebSocket, 2000);
+        });
+
+        webSocket.addEventListener('message',(event) => {
+          messageText(event.data).then((result) => {
+            var data = JSON.parse(result);
+            switch (data.action) {
+              case "options":
+                var select = document.getElementById("options");
+                data.animations.forEach(function(file){
+                  var option = document.createElement('option');
+                  option.value = file;
+                  option.innerHTML = file.replace('./bin/animations/','').replace('.so','');
+                  select.append(option)
+                });
+                break;
+              case "connectionStatus":
+                setConnectionBanner(data.connected ? 'ok' : 'waiting-for-cube');
+                break;
+              default:
+
+            }
+          });
+        });
+      }
 
       function setAttributes(field, data) {
         for(let prop in data) {
@@ -234,35 +322,7 @@
 
         });
 
-        webSocket.addEventListener('open', function(e){
-
-          webSocket.send(JSON.stringify({
-            action: "options"
-          }));
-        });
-
-        webSocket.addEventListener('message',(event) => {
-
-          if (event.data instanceof Blob) {
-            event.data.text().then((result) => {
-              var data = JSON.parse(result);
-              switch (data.action) {
-                case "options":
-                  var select = document.getElementById("options");
-                  data.animations.forEach(function(file){
-                    var option = document.createElement('option');
-                    option.value = file;
-                    option.innerHTML = file.replace('./bin/animations/','').replace('.so','');
-                    select.append(option)
-                  });
-                  break;
-                default:
-
-              }
-
-            });
-          }
-        });
+        connectWebSocket();
 
         document.getElementById('options').addEventListener('change', function(event){
 
@@ -342,6 +402,7 @@
 
   </head>
   <body>
+    <div id="connectionBanner" class="status-banner visible reconnecting">Forbinder til cube-client...</div>
     <div class="panel">
       <header>
         <h1>Cube</h1>
