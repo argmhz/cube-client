@@ -1,0 +1,22 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 20000,
+      "max": 300000,
+      "value": 100000
+    },
+    {
+      "name": "voxels",
+      "datatype": "integer",
+      "label": "Antal gnister",
+      "type": "range",
+      "min": 1,
+      "max": 400,
+      "value": 100
+    }
+  ]
+}
