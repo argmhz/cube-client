@@ -1,0 +1,23 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 15000,
+      "max": 100000,
+      "value": 40000
+    },
+    {
+      "name": "intensity",
+      "datatype": "float",
+      "label": "Styrke",
+      "type": "range",
+      "min": 0.2,
+      "max": 2.5,
+      "step": 0.1,
+      "value": 1.0
+    }
+  ]
+}
