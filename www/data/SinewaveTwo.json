@@ -1,0 +1,22 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 8000,
+      "max": 200000,
+      "value": 64000
+    },
+    {
+      "name": "shells",
+      "datatype": "integer",
+      "label": "Antal ringe",
+      "type": "range",
+      "min": 1,
+      "max": 4,
+      "value": 4
+    }
+  ]
+}
