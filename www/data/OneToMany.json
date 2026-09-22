@@ -1,0 +1,22 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 100,
+      "max": 20000,
+      "value": 500
+    },
+    {
+      "name": "pause",
+      "datatype": "integer",
+      "label": "Pause mellem runder",
+      "type": "range",
+      "min": 0,
+      "max": 5000000,
+      "value": 1000000
+    }
+  ]
+}

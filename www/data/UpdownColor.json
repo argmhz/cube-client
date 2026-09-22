@@ -1,0 +1,22 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 3000,
+      "max": 120000,
+      "value": 30000
+    },
+    {
+      "name": "settle",
+      "datatype": "integer",
+      "label": "Pause pr. søjle",
+      "type": "range",
+      "min": 0,
+      "max": 500000,
+      "value": 100000
+    }
+  ]
+}
