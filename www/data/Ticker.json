@@ -6,6 +6,18 @@
       "label": "Tekst"
     },
     {
+      "name": "mode",
+      "datatype": "integer",
+      "label": "Tilstand",
+      "type": "select",
+      "options": [
+        { "value": 0, "label": "Skilt (kan dreje)" },
+        { "value": 1, "label": "Rundt om kuben" },
+        { "value": 2, "label": "Lodret" },
+        { "value": 3, "label": "Stillestående" }
+      ]
+    },
+    {
       "name": "palette",
       "datatype": "integer",
       "label": "Farvetilstand",
