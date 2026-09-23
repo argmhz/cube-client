@@ -1,0 +1,98 @@
+{
+  "fields": [
+    {
+      "name": "text",
+      "datatype": "string",
+      "label": "Tekst"
+    },
+    {
+      "name": "palette",
+      "datatype": "integer",
+      "label": "Farvetilstand",
+      "type": "select",
+      "options": [
+        { "value": 1, "label": "Regnbue langs teksten" },
+        { "value": 0, "label": "Ensfarvet" },
+        { "value": 2, "label": "Regnbue efter højde" }
+      ]
+    },
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 10000,
+      "max": 250000,
+      "value": 60000
+    },
+    {
+      "name": "spin",
+      "datatype": "float",
+      "label": "Rotation",
+      "type": "range",
+      "min": 0,
+      "max": 3,
+      "step": 0.05,
+      "value": 0.35
+    },
+    {
+      "name": "thickness",
+      "datatype": "float",
+      "label": "Tykkelse",
+      "type": "range",
+      "min": 1,
+      "max": 8,
+      "step": 0.5,
+      "value": 2
+    },
+    {
+      "name": "hue",
+      "datatype": "float",
+      "label": "Grundfarve",
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.02,
+      "value": 0
+    },
+    {
+      "name": "flow",
+      "datatype": "float",
+      "label": "Farveskift",
+      "type": "range",
+      "min": 0,
+      "max": 4,
+      "step": 0.1,
+      "value": 0.5
+    },
+    {
+      "name": "brightness",
+      "datatype": "float",
+      "label": "Lysstyrke",
+      "type": "range",
+      "min": 0.15,
+      "max": 1,
+      "step": 0.05,
+      "value": 1
+    },
+    {
+      "name": "gap",
+      "datatype": "integer",
+      "label": "Mellemrum",
+      "type": "range",
+      "min": 0,
+      "max": 32,
+      "value": 8
+    },
+    {
+      "name": "wobble",
+      "datatype": "float",
+      "label": "Bølge",
+      "type": "range",
+      "min": 0,
+      "max": 3,
+      "step": 0.1,
+      "value": 0
+    }
+  ]
+}
