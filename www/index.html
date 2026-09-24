@@ -233,6 +233,89 @@
         filter: brightness(1.08);
       }
 
+      .mic-card {
+        margin-top: 20px;
+      }
+
+      .mic-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .mic-head .field-label {
+        margin-bottom: 0;
+      }
+
+      .mic-toggle {
+        background: linear-gradient(90deg, var(--accent-a), var(--accent-b));
+        border: none;
+        border-radius: 10px;
+        color: #0b0710;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 9px 18px;
+        cursor: pointer;
+      }
+
+      .mic-toggle:hover { filter: brightness(1.08); }
+
+      .mic-toggle.is-on {
+        background: var(--surface-raised);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+
+      /* The meters stand upright in the same order the cube's rings run,
+         bass on the left through treble on the right, so the panel reads
+         like a slice through the cube itself. */
+      .mic-meter {
+        display: flex;
+        gap: 10px;
+      }
+
+      .mic-band {
+        flex: 1;
+        text-align: center;
+      }
+
+      .mic-bar {
+        height: 60px;
+        border-radius: 8px;
+        background: var(--surface-raised);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: flex-end;
+        overflow: hidden;
+      }
+
+      .mic-fill {
+        width: 100%;
+        height: 0;
+        transition: height 80ms linear;
+      }
+
+      .mic-band:nth-child(1) .mic-fill { background: #ff3b30; }
+      .mic-band:nth-child(2) .mic-fill { background: #ff9f0a; }
+      .mic-band:nth-child(3) .mic-fill { background: #30d158; }
+      .mic-band:nth-child(4) .mic-fill { background: var(--accent-c); }
+
+      .mic-band small {
+        display: block;
+        margin-top: 7px;
+        font-size: 11.5px;
+        color: var(--text-faint);
+      }
+
+      .mic-status {
+        margin-top: 14px;
+        font-size: 12.5px;
+        color: var(--text-dim);
+      }
+
       footer {
         text-align: center;
         margin-top: 24px;
@@ -243,6 +326,19 @@
     <script type="text/javascript">
 
       var webSocket;
+
+      // Every command is newline-terminated. The cube server splits its TCP
+      // stream on '\n' (lib/net/ConnectionLoop.h); without the terminator a
+      // slider move sent while the mic is streaming gets glued to the next
+      // band update and both are dropped. Sends are skipped while the socket
+      // is down rather than throwing -- the mic pushes 30 a second, and
+      // index.js reconnects on its own.
+      function send(command) {
+        if (!webSocket || webSocket.readyState !== WebSocket.OPEN) {
+          return;
+        }
+        webSocket.send(JSON.stringify(command) + "\n");
+      }
 
       // WebSocket messages carrying cube-server data arrive as a Blob (the
       // existing binary passthrough from index.js); our own synthetic
@@ -278,9 +374,7 @@
         webSocket = new WebSocket("ws://" + location.host + "/ws");
 
         webSocket.addEventListener('open', function(e){
-          webSocket.send(JSON.stringify({
-            action: "options"
-          }));
+          send({ action: "options" });
         });
 
         webSocket.addEventListener('close', function(e){
@@ -328,8 +422,120 @@
             value = parseInt(value);
           }
 
-          webSocket.send(JSON.stringify({ action: "set", [field.name] : value }));
+          send({ action: "set", [field.name] : value });
         })
+      }
+
+      // ---- microphone capture --------------------------------------------
+      // All the analysis happens here in the browser: an AnalyserNode's FFT
+      // is collapsed into four averages -- bass, low-mid, high-mid, treble,
+      // one per ring of the cube -- and streamed as
+      // {"action":"set","bands":[0-255 x4]} about 30 times a second.
+      // animations/Spectrum.cpp only draws what it is handed; nothing is
+      // analysed on the Pi.
+
+      var BAND_EDGES = [[20, 250], [250, 1000], [1000, 4000], [4000, 12000]];
+      // Ordinary music puts far more energy in the bass than the treble, so
+      // the upper bands are nudged to make all four rings usable at one
+      // sensitivity setting.
+      var BAND_WEIGHTS = [1.0, 1.1, 1.4, 1.8];
+      var SEND_INTERVAL_MS = 33;
+
+      var micStream = null;
+      var micContext = null;
+      var micTimer = null;
+
+      function setMicStatus(text) {
+        document.getElementById('micStatus').textContent = text;
+      }
+
+      function showMicLevels(bands) {
+        var fills = document.querySelectorAll('#micMeter .mic-fill');
+        bands.forEach(function(value, i) {
+          fills[i].style.height = Math.round(value / 255 * 100) + '%';
+        });
+      }
+
+      function readBands(analyser, freqData) {
+        analyser.getByteFrequencyData(freqData);
+        var binHz = micContext.sampleRate / analyser.fftSize;
+
+        return BAND_EDGES.map(function(edge, i) {
+          var from = Math.max(0, Math.floor(edge[0] / binHz));
+          var to = Math.min(freqData.length - 1, Math.ceil(edge[1] / binHz));
+          var sum = 0;
+          for (var bin = from; bin <= to; bin++) {
+            sum += freqData[bin];
+          }
+          var average = sum / Math.max(1, to - from + 1);
+          return Math.max(0, Math.min(255, Math.round(average * BAND_WEIGHTS[i])));
+        });
+      }
+
+      function startMic() {
+        // getUserMedia only exists in a secure context. Opening this page on
+        // the Pi's LAN address over plain http leaves mediaDevices undefined
+        // -- worth saying so, since the browser gives no visible reason.
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setMicStatus('Mikrofon kræver https eller localhost — ' + location.origin + ' er ikke en sikker kontekst.');
+          return;
+        }
+
+        navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+        }).then(function(stream) {
+          micStream = stream;
+          micContext = new (window.AudioContext || window.webkitAudioContext)();
+
+          var analyser = micContext.createAnalyser();
+          analyser.fftSize = 2048;
+          analyser.smoothingTimeConstant = 0.6;
+          micContext.createMediaStreamSource(stream).connect(analyser);
+
+          var freqData = new Uint8Array(analyser.frequencyBinCount);
+          micTimer = setInterval(function() {
+            var bands = readBands(analyser, freqData);
+            send({ action: 'set', bands: bands });
+            showMicLevels(bands);
+          }, SEND_INTERVAL_MS);
+
+          var micBtn = document.getElementById('micBtn');
+          micBtn.textContent = 'Slå fra';
+          micBtn.classList.add('is-on');
+          setMicStatus('Lytter — ' + Math.round(micContext.sampleRate / 1000) + ' kHz, sender ' + Math.round(1000 / SEND_INTERVAL_MS) + ' gange i sekundet.');
+        }).catch(function(err) {
+          setMicStatus('Mikrofonen blev afvist: ' + err.name);
+        });
+      }
+
+      function stopMic() {
+        if (micTimer) {
+          clearInterval(micTimer);
+          micTimer = null;
+        }
+        if (micStream) {
+          micStream.getTracks().forEach(function(track) { track.stop(); });
+          micStream = null;
+        }
+        if (micContext) {
+          micContext.close();
+          micContext = null;
+        }
+
+        // Leave the cube dark rather than frozen on the last frame.
+        send({ action: 'set', bands: [0, 0, 0, 0] });
+        showMicLevels([0, 0, 0, 0]);
+        var micBtn = document.getElementById('micBtn');
+        micBtn.textContent = 'Slå til';
+        micBtn.classList.remove('is-on');
+        setMicStatus('Slået fra.');
+      }
+
+      function setMicVisible(visible) {
+        document.getElementById('micCard').hidden = !visible;
+        if (!visible && micTimer) {
+          stopMic();
+        }
       }
 
       function removeNoneAttributes(data) {
@@ -352,18 +558,23 @@
             value = parseFloat(value);
           }
 
-          webSocket.send(JSON.stringify({ action: "set", [event.target.name] : value }));
+          send({ action: "set", [event.target.name] : value });
 
+        });
+
+        document.getElementById('micBtn').addEventListener('click', function() {
+          if (micTimer) {
+            stopMic();
+          } else {
+            startMic();
+          }
         });
 
         connectWebSocket();
 
         document.getElementById('options').addEventListener('change', function(event){
 
-          webSocket.send(JSON.stringify({
-            action:"select",
-            animation: event.target.value
-          }));
+          send({ action:"select", animation: event.target.value });
 
           let form = document.getElementById("form");
           form.innerHTML = "";
@@ -371,10 +582,12 @@
 
             if(response.status != 200){
               form.innerHTML = "";
+              setMicVisible(false);
               return;
             }
 
             response.json().then((data) => {
+              setMicVisible(!!data.mic);
               for (let name in data.fields) {
                 let field = undefined;
 
@@ -395,7 +608,7 @@
                     field = document.createElement('button');
                     field.innerHTML = data.fields[name].value;
                     field.addEventListener('click',function(){
-                      webSocket.send(JSON.stringify({ action: "set", [data.fields[name].name] : data.fields[name].send }));
+                      send({ action: "set", [data.fields[name].name] : data.fields[name].send });
                     });
 
                   break;
@@ -457,6 +670,20 @@
         <form>
           <div id="form"></div>
         </form>
+      </div>
+
+      <div class="card mic-card" id="micCard" hidden>
+        <div class="mic-head">
+          <span class="field-label">Mikrofon</span>
+          <button type="button" class="mic-toggle" id="micBtn">Slå til</button>
+        </div>
+        <div class="mic-meter" id="micMeter">
+          <div class="mic-band"><div class="mic-bar"><div class="mic-fill"></div></div><small>Bas</small></div>
+          <div class="mic-band"><div class="mic-bar"><div class="mic-fill"></div></div><small>Lav-mid</small></div>
+          <div class="mic-band"><div class="mic-bar"><div class="mic-fill"></div></div><small>Høj-mid</small></div>
+          <div class="mic-band"><div class="mic-bar"><div class="mic-fill"></div></div><small>Diskant</small></div>
+        </div>
+        <p class="mic-status" id="micStatus">Slået fra.</p>
       </div>
 
       <footer>Forbundet via WebSocket til cube-serveren</footer>
