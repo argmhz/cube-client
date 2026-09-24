@@ -1,0 +1,33 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 10000,
+      "max": 150000,
+      "value": 45000
+    },
+    {
+      "name": "wobble",
+      "datatype": "float",
+      "label": "Tumlen",
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "value": 0
+    },
+    {
+      "name": "eyeGlow",
+      "datatype": "float",
+      "label": "Øjenglød",
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.05,
+      "value": 0.6
+    }
+  ]
+}
