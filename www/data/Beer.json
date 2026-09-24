@@ -1,0 +1,20 @@
+{
+  "fields" : [
+    {
+      "name" : "speed",
+      "datatype" : "integer",
+      "label" : "Hastighed",
+      "type" : "range",
+      "min" : 5000,
+      "max" : 150000,
+      "value" : 40000
+    },
+    {
+      "name" : "chug",
+      "type" : "button",
+      "label" : "Skål",
+      "value" : "Chug!",
+      "send" : 1
+    }
+  ]
+}
