@@ -1,0 +1,115 @@
+{
+  "fields": [
+    {
+      "name": "pattern",
+      "datatype": "integer",
+      "label": "Bane",
+      "type": "select",
+      "options": [
+        { "value": 0, "label": "Strømning (følger et vektorfelt)" },
+        { "value": 1, "label": "Knude" },
+        { "value": 2, "label": "Kredsløb" },
+        { "value": 3, "label": "Vektor (lige ud, preller af)" }
+      ]
+    },
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 8000,
+      "max": 150000,
+      "value": 30000
+    },
+    {
+      "name": "velocity",
+      "datatype": "float",
+      "label": "Fart",
+      "type": "range",
+      "min": 0.02,
+      "max": 1,
+      "step": 0.02,
+      "value": 0.25
+    },
+    {
+      "name": "trail",
+      "datatype": "float",
+      "label": "Halelængde",
+      "type": "range",
+      "min": 0,
+      "max": 0.97,
+      "step": 0.01,
+      "value": 0.85
+    },
+    {
+      "name": "size",
+      "datatype": "float",
+      "label": "Størrelse",
+      "type": "range",
+      "min": 0.35,
+      "max": 2,
+      "step": 0.05,
+      "value": 0.7
+    },
+    {
+      "name": "hue",
+      "datatype": "float",
+      "label": "Farve",
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.01,
+      "value": 0.55
+    },
+    {
+      "name": "spread",
+      "datatype": "float",
+      "label": "Farveskift",
+      "type": "range",
+      "min": 0,
+      "max": 2,
+      "step": 0.1,
+      "value": 0.3
+    },
+    {
+      "name": "brightness",
+      "datatype": "float",
+      "label": "Lysstyrke",
+      "type": "range",
+      "min": 0.1,
+      "max": 1,
+      "step": 0.05,
+      "value": 1.0
+    },
+    {
+      "name": "dx",
+      "datatype": "float",
+      "label": "Vektor X",
+      "type": "range",
+      "min": -1,
+      "max": 1,
+      "step": 0.05,
+      "value": 1.0
+    },
+    {
+      "name": "dy",
+      "datatype": "float",
+      "label": "Vektor Y",
+      "type": "range",
+      "min": -1,
+      "max": 1,
+      "step": 0.05,
+      "value": 0.6
+    },
+    {
+      "name": "dz",
+      "datatype": "float",
+      "label": "Vektor Z",
+      "type": "range",
+      "min": -1,
+      "max": 1,
+      "step": 0.05,
+      "value": 0.35
+    }
+  ]
+}

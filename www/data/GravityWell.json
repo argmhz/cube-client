@@ -1,0 +1,73 @@
+{
+  "fields": [
+    {
+      "name": "mass",
+      "datatype": "float",
+      "label": "Masse",
+      "type": "range",
+      "min": 0.8,
+      "max": 4,
+      "step": 0.1,
+      "value": 2.5
+    },
+    {
+      "name": "size",
+      "datatype": "float",
+      "label": "Kuglens størrelse",
+      "type": "range",
+      "min": 0.8,
+      "max": 2.2,
+      "step": 0.1,
+      "value": 1.4
+    },
+    {
+      "name": "hold",
+      "datatype": "float",
+      "label": "Hviletid (sekunder)",
+      "type": "range",
+      "min": 0.5,
+      "max": 20,
+      "step": 0.5,
+      "value": 3
+    },
+    {
+      "name": "grid",
+      "datatype": "integer",
+      "label": "Flade",
+      "type": "select",
+      "options": [
+        { "value": 0, "label": "Massiv" },
+        { "value": 1, "label": "Gitter" }
+      ]
+    },
+    {
+      "name": "orbit",
+      "datatype": "integer",
+      "label": "Kugle i kredsløb",
+      "type": "select",
+      "options": [
+        { "value": 1, "label": "Til" },
+        { "value": 0, "label": "Fra" }
+      ]
+    },
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 8000,
+      "max": 150000,
+      "value": 30000
+    },
+    {
+      "name": "brightness",
+      "datatype": "float",
+      "label": "Lysstyrke",
+      "type": "range",
+      "min": 0.1,
+      "max": 1,
+      "step": 0.05,
+      "value": 1.0
+    }
+  ]
+}
