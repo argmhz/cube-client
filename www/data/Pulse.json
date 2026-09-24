@@ -1,0 +1,33 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 10000,
+      "max": 150000,
+      "value": 40000
+    },
+    {
+      "name": "gap",
+      "datatype": "float",
+      "label": "Afstand mellem skaller",
+      "type": "range",
+      "min": 1.5,
+      "max": 6,
+      "step": 0.1,
+      "value": 2.5
+    },
+    {
+      "name": "brightness",
+      "datatype": "float",
+      "label": "Lysstyrke",
+      "type": "range",
+      "min": 0.15,
+      "max": 1,
+      "step": 0.05,
+      "value": 1.0
+    }
+  ]
+}
