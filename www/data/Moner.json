@@ -1,0 +1,20 @@
+{
+  "fields" : [
+    {
+      "name" : "speed",
+      "datatype" : "integer",
+      "label" : "Hastighed",
+      "type" : "range",
+      "min" : 10000,
+      "max" : 150000,
+      "value" : 45000
+    },
+    {
+      "name" : "reveal",
+      "type" : "button",
+      "label" : "Afslør dåsen",
+      "value" : "Afslør!",
+      "send" : 1
+    }
+  ]
+}
