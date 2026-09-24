@@ -1,0 +1,55 @@
+{
+  "fields": [
+    {
+      "name": "mode",
+      "datatype": "integer",
+      "label": "Tilstand",
+      "type": "select",
+      "options": [
+        { "value": 0, "label": "Spring til hyperrummet med jævne mellemrum" },
+        { "value": 1, "label": "Kun stjernefelt" },
+        { "value": 2, "label": "Kun hyperrum" }
+      ]
+    },
+    {
+      "name": "direction",
+      "datatype": "integer",
+      "label": "Flyveretning",
+      "type": "select",
+      "options": [
+        { "value": 0, "label": "Mod forsiden (z = 7)" },
+        { "value": 1, "label": "Mod bagsiden (z = 0)" }
+      ]
+    },
+    {
+      "name": "density",
+      "datatype": "float",
+      "label": "Antal stjerner",
+      "type": "range",
+      "min": 0.3,
+      "max": 1.5,
+      "step": 0.05,
+      "value": 1.0
+    },
+    {
+      "name": "pace",
+      "datatype": "float",
+      "label": "Tempo",
+      "type": "range",
+      "min": 0.25,
+      "max": 3,
+      "step": 0.25,
+      "value": 1.0
+    },
+    {
+      "name": "brightness",
+      "datatype": "float",
+      "label": "Lysstyrke",
+      "type": "range",
+      "min": 0.15,
+      "max": 1,
+      "step": 0.05,
+      "value": 1.0
+    }
+  ]
+}
