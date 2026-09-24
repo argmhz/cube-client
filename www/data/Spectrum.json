@@ -1,0 +1,62 @@
+{
+  "mic" : {
+    "bands" : 4
+  },
+  "fields" : [
+    {
+      "name" : "gain",
+      "datatype" : "integer",
+      "label" : "Følsomhed (%)",
+      "type" : "range",
+      "min" : 10,
+      "max" : 400,
+      "value" : 100
+    },
+    {
+      "name" : "gate",
+      "datatype" : "integer",
+      "label" : "Støjgrænse",
+      "type" : "range",
+      "min" : 0,
+      "max" : 80,
+      "value" : 8
+    },
+    {
+      "name" : "decay",
+      "datatype" : "integer",
+      "label" : "Henfald",
+      "type" : "range",
+      "min" : 5,
+      "max" : 200,
+      "value" : 35
+    },
+    {
+      "name" : "peak_decay",
+      "datatype" : "integer",
+      "label" : "Peak-henfald",
+      "type" : "range",
+      "min" : 1,
+      "max" : 100,
+      "value" : 8
+    },
+    {
+      "name" : "show_peak",
+      "datatype" : "integer",
+      "label" : "Peak-markør",
+      "type" : "select",
+      "options" : [
+        { "label" : "Til", "value" : 1 },
+        { "label" : "Fra", "value" : 0 }
+      ]
+    },
+    {
+      "name" : "speed",
+      "datatype" : "integer",
+      "label" : "Opdateringshastighed (µs)",
+      "type" : "range",
+      "min" : 5000,
+      "max" : 100000,
+      "value" : 25000
+    }
+  ]
+}
