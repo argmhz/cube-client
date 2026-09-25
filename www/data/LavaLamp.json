@@ -1,0 +1,72 @@
+{
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 10000,
+      "max": 150000,
+      "value": 45000
+    },
+    {
+      "name": "blobs",
+      "datatype": "integer",
+      "label": "Antal klatter",
+      "type": "range",
+      "min": 1,
+      "max": 6,
+      "value": 4
+    },
+    {
+      "name": "spread",
+      "datatype": "float",
+      "label": "Størrelse",
+      "type": "range",
+      "min": 0.4,
+      "max": 3,
+      "step": 0.1,
+      "value": 0.8
+    },
+    {
+      "name": "hue",
+      "datatype": "float",
+      "label": "Grundfarve",
+      "type": "range",
+      "min": 0,
+      "max": 1,
+      "step": 0.02,
+      "value": 0.02
+    },
+    {
+      "name": "hueSpread",
+      "datatype": "float",
+      "label": "Farvespredning",
+      "type": "range",
+      "min": 0,
+      "max": 0.3,
+      "step": 0.02,
+      "value": 0.06
+    },
+    {
+      "name": "brightness",
+      "datatype": "float",
+      "label": "Lysstyrke",
+      "type": "range",
+      "min": 0.15,
+      "max": 1,
+      "step": 0.05,
+      "value": 1
+    },
+    {
+      "name": "pulse",
+      "datatype": "float",
+      "label": "Pulsering",
+      "type": "range",
+      "min": 0,
+      "max": 0.6,
+      "step": 0.05,
+      "value": 0.15
+    }
+  ]
+}
