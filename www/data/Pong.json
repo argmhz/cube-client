@@ -1,0 +1,29 @@
+{
+  "multiplayer": { "players": 4 },
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 25000,
+      "max": 120000,
+      "value": 55000
+    },
+    {
+      "name": "dir",
+      "datatype": "integer",
+      "label": "Din paddle",
+      "type": "button",
+      "value": "&#9650; Op",
+      "send": 1
+    },
+    {
+      "name": "dir",
+      "datatype": "integer",
+      "type": "button",
+      "value": "&#9660; Ned",
+      "send": 2
+    }
+  ]
+}
