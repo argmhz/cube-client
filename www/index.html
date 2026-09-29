@@ -316,6 +316,51 @@
         color: var(--text-dim);
       }
 
+      .player-select-card {
+        margin-top: 20px;
+      }
+
+      .player-select-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .player-select-btn {
+        background: var(--surface-raised);
+        border: 1px solid var(--border);
+        border-top: 3px solid var(--player-color, var(--accent-b));
+        border-radius: 10px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 14px 10px;
+        cursor: pointer;
+      }
+
+      .player-select-btn:hover {
+        filter: brightness(1.1);
+      }
+
+      .player-chosen-name {
+        font-weight: 700;
+      }
+
+      .player-switch-link {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        font-family: inherit;
+        font-size: 13px;
+        text-decoration: underline;
+        cursor: pointer;
+        padding: 0;
+        margin-top: 10px;
+      }
+
       footer {
         text-align: center;
         margin-top: 24px;
@@ -327,6 +372,16 @@
 
       var webSocket;
 
+      // Which player slot this browser tab is controlling in a multiplayer
+      // game, or null outside of one -- set by choosePlayer() below, read by
+      // send(). One tab can only ever be one player at a time; that's the
+      // entire mechanism multiplayer games rely on to tell players apart,
+      // since the protocol itself has no concept of client identity (every
+      // browser tab's "set" message is relayed to the same cube connection
+      // and would otherwise be indistinguishable from any other tab's).
+      var currentPlayer = null;
+      var PLAYER_COLORS = ['#35d0ff', '#ff5ec4', '#ffb020', '#39e07a'];
+
       // Every command is newline-terminated. The cube server splits its TCP
       // stream on '\n' (lib/net/ConnectionLoop.h); without the terminator a
       // slider move sent while the mic is streaming gets glued to the next
@@ -336,6 +391,9 @@
       function send(command) {
         if (!webSocket || webSocket.readyState !== WebSocket.OPEN) {
           return;
+        }
+        if (currentPlayer !== null && command.action === 'set') {
+          command = Object.assign({}, command, { player: currentPlayer });
         }
         webSocket.send(JSON.stringify(command) + "\n");
       }
@@ -538,6 +596,47 @@
         }
       }
 
+      // config is the schema's "multiplayer" key, e.g. {"players": 4}, or
+      // undefined/falsy for a normal single-player animation.
+      function setMultiplayerVisible(config) {
+        var card = document.getElementById('playerSelectCard');
+        currentPlayer = null;
+
+        if (!config || !config.players) {
+          card.hidden = true;
+          return;
+        }
+
+        card.hidden = false;
+        document.getElementById('playerChooser').hidden = false;
+        document.getElementById('playerChosen').hidden = true;
+
+        var wrap = document.getElementById('playerButtons');
+        wrap.innerHTML = '';
+        for (var i = 1; i <= config.players; i++) {
+          (function (n) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'player-select-btn';
+            btn.style.setProperty('--player-color', PLAYER_COLORS[(n - 1) % PLAYER_COLORS.length]);
+            btn.textContent = 'Spiller ' + n;
+            btn.addEventListener('click', function () {
+              choosePlayer(n);
+            });
+            wrap.appendChild(btn);
+          })(i);
+        }
+      }
+
+      function choosePlayer(n) {
+        currentPlayer = n;
+        document.getElementById('playerChooser').hidden = true;
+        document.getElementById('playerChosen').hidden = false;
+        var name = document.getElementById('playerChosenName');
+        name.textContent = 'spiller ' + n;
+        name.style.color = PLAYER_COLORS[(n - 1) % PLAYER_COLORS.length];
+      }
+
       function removeNoneAttributes(data) {
         ['label','options'].forEach((item, i) => {
           delete data[item];
@@ -570,6 +669,12 @@
           }
         });
 
+        document.getElementById('playerSwitchBtn').addEventListener('click', function() {
+          currentPlayer = null;
+          document.getElementById('playerChooser').hidden = false;
+          document.getElementById('playerChosen').hidden = true;
+        });
+
         connectWebSocket();
 
         document.getElementById('options').addEventListener('change', function(event){
@@ -588,6 +693,7 @@
 
             response.json().then((data) => {
               setMicVisible(!!data.mic);
+              setMultiplayerVisible(data.multiplayer);
               for (let name in data.fields) {
                 let field = undefined;
 
@@ -684,6 +790,17 @@
           <div class="mic-band"><div class="mic-bar"><div class="mic-fill"></div></div><small>Diskant</small></div>
         </div>
         <p class="mic-status" id="micStatus">Slået fra.</p>
+      </div>
+
+      <div class="card player-select-card" id="playerSelectCard" hidden>
+        <div id="playerChooser">
+          <span class="field-label">Vælg din spiller</span>
+          <div class="player-select-grid" id="playerButtons"></div>
+        </div>
+        <div id="playerChosen" hidden>
+          <span class="field-label">Du er <span class="player-chosen-name" id="playerChosenName"></span></span>
+          <button type="button" class="player-switch-link" id="playerSwitchBtn">Skift spiller</button>
+        </div>
       </div>
 
       <footer>Forbundet via WebSocket til cube-serveren</footer>

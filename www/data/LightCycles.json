@@ -1,0 +1,57 @@
+{
+  "multiplayer": { "players": 4 },
+  "fields": [
+    {
+      "name": "speed",
+      "datatype": "integer",
+      "label": "Hastighed",
+      "type": "range",
+      "min": 40000,
+      "max": 200000,
+      "value": 90000
+    },
+    {
+      "name": "dir",
+      "datatype": "integer",
+      "label": "Retning",
+      "type": "button",
+      "value": "+X",
+      "send": 1
+    },
+    {
+      "name": "dir",
+      "datatype": "integer",
+      "type": "button",
+      "value": "-X",
+      "send": 2
+    },
+    {
+      "name": "dir",
+      "datatype": "integer",
+      "type": "button",
+      "value": "+Y",
+      "send": 3
+    },
+    {
+      "name": "dir",
+      "datatype": "integer",
+      "type": "button",
+      "value": "-Y",
+      "send": 4
+    },
+    {
+      "name": "dir",
+      "datatype": "integer",
+      "type": "button",
+      "value": "+Z",
+      "send": 5
+    },
+    {
+      "name": "dir",
+      "datatype": "integer",
+      "type": "button",
+      "value": "-Z",
+      "send": 6
+    }
+  ]
+}
