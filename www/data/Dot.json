@@ -4,43 +4,44 @@
       "name": "com",
       "datatype": "integer",
       "label": "Retning",
+      "layout": "dpad3d",
       "type": "button",
-      "value": "+X",
+      "value": "X &rarr;",
       "send": 1
     },
     {
       "name": "com",
       "datatype": "integer",
       "type": "button",
-      "value": "-X",
+      "value": "&larr; X",
       "send": 2
     },
     {
       "name": "com",
       "datatype": "integer",
       "type": "button",
-      "value": "+Y",
+      "value": "&#9650; Op",
       "send": 3
     },
     {
       "name": "com",
       "datatype": "integer",
       "type": "button",
-      "value": "-Y",
+      "value": "&#9660; Ned",
       "send": 4
     },
     {
       "name": "com",
       "datatype": "integer",
       "type": "button",
-      "value": "+Z",
+      "value": "&uarr; Z",
       "send": 5
     },
     {
       "name": "com",
       "datatype": "integer",
       "type": "button",
-      "value": "-Z",
+      "value": "&darr; Z",
       "send": 6
     }
   ]

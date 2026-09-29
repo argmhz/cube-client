@@ -179,6 +179,28 @@
         flex: 1 1 calc(50% - 9px);
       }
 
+      /* A 3D direction pad: X/Z arranged as a cross (matching their on-
+         screen position -- top/bottom/left/right -- rather than which cube
+         axis they happen to be), Y as "Op"/"Ned" since vertical is the one
+         direction that reads the same regardless of which side of the
+         physical cube you're standing at. */
+      #form .dpad3d {
+        flex: 1 1 100%;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(4, auto);
+        grid-template-areas:
+          ".     z-pos ."
+          "x-neg y-pos x-pos"
+          ".     z-neg ."
+          ".     y-neg .";
+        gap: 10px;
+      }
+
+      .dpad3d button {
+        margin: 0;
+      }
+
       .form-label {
         display: block;
         font-size: 13px;
@@ -694,8 +716,56 @@
             response.json().then((data) => {
               setMicVisible(!!data.mic);
               setMultiplayerVisible(data.multiplayer);
-              for (let name in data.fields) {
+              for (let i = 0; i < data.fields.length; i++) {
+                let name = i;
                 let field = undefined;
+
+                // A "dpad3d"-flagged button is the first of a fixed run of
+                // six -- +X,-X,+Y,-Y,+Z,-Z, in that order (Dot.json and
+                // LightCycles.json's convention) -- rendered as a 3D
+                // direction pad instead of the generic one-button-per-row
+                // grid. Consumes this field plus the next five and skips
+                // past them, rather than falling through to the normal
+                // per-field rendering below.
+                if (data.fields[name].type === 'button' && data.fields[name].layout === 'dpad3d') {
+                  const group = data.fields.slice(i, i + 6);
+                  const areas = ['x-pos', 'x-neg', 'y-pos', 'y-neg', 'z-pos', 'z-neg'];
+
+                  if (data.fields[name].label) {
+                    let label = document.createElement('label');
+                    label.classList.add('form-label');
+                    label.innerHTML = data.fields[name].label;
+                    let labelWrap = document.createElement('div');
+                    labelWrap.classList.add('mb-3');
+                    labelWrap.appendChild(label);
+                    form.appendChild(labelWrap);
+                  }
+
+                  let dpad = document.createElement('div');
+                  dpad.classList.add('mb-3', 'dpad3d');
+                  group.forEach((def, idx) => {
+                    let btn = document.createElement('button');
+                    // Without this, a <button> inside <form> defaults to
+                    // type="submit" -- a click reloads the page instead of
+                    // sending. The generic per-field buttons avoid this only
+                    // by accident: their schema's "type":"button" happens to
+                    // also be a valid HTML button-type value, applied via
+                    // setAttributes() below, which this hand-built button
+                    // never goes through.
+                    btn.setAttribute('type', 'button');
+                    btn.classList.add('form-control');
+                    btn.innerHTML = def.value;
+                    btn.style.gridArea = areas[idx];
+                    btn.addEventListener('click', function () {
+                      send({ action: 'set', [def.name]: def.send });
+                    });
+                    dpad.appendChild(btn);
+                  });
+                  form.appendChild(dpad);
+
+                  i += 5;
+                  continue;
+                }
 
                 switch (data.fields[name].type) {
                   case 'select':
@@ -739,7 +809,24 @@
                   label.classList.add('form-label');
                   label.innerHTML = data.fields[name].label;
                   delete data.fields[name].label;
-                  wrap.appendChild(label);
+
+                  if(data.fields[name].type === 'button') {
+                    // A label on one button in a direction-pad group (e.g.
+                    // Dot.json's "Retning" on just its first +X entry) is a
+                    // heading for the whole group, not a caption for that
+                    // one button -- give it its own full-width row instead
+                    // of nesting it inside that button's grid cell, which
+                    // made just that cell taller and the row crooked (the
+                    // label-less buttons sit flush at their cell's top,
+                    // level with the label itself, not with the button
+                    // beside them).
+                    let labelWrap = document.createElement('div');
+                    labelWrap.classList.add('mb-3');
+                    labelWrap.appendChild(label);
+                    form.appendChild(labelWrap);
+                  } else {
+                    wrap.appendChild(label);
+                  }
                 }
 
                 removeNoneAttributes(data.fields[name]);
